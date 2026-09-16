@@ -1,0 +1,44 @@
+on:
+  push:
+    - workflows: [lab-check]
+      filter:
+        branches: ["main", "master"]
+
+  pull_request:
+    - workflows: [lab-check]
+
+workflows:
+  lab-check:
+    tasks:
+      - name: run-notebook-and-build-report
+        cubes:
+          - name: execute-notebook
+            image: docker.io/library/python:3.11
+            script:
+              # 1. Устанавливаем зависимости работы.
+              - pip install --no-cache-dir -r requirements.txt
+
+              # 2. Выполняем ноутбук целиком. Результат (вывод ячеек и графики)
+              #    сохраняется в отдельный файл executed_lab.ipynb, исходный
+              #    lab.ipynb при этом не изменяется.
+              #    timeout нужен обязательно: у nbconvert по умолчанию небольшой
+              #    лимит на ячейку, и сборка падает на долгих вычислениях.
+              - jupyter nbconvert --to notebook --execute
+                  --ExecutePreprocessor.timeout=600
+                  --output executed_lab.ipynb lab.ipynb
+
+              # 3. Дописываем в последнюю ячейку отметку о том, что ячейки
+              #    выполнил именно раннер: коммит, номер запуска, хост контейнера.
+              #    Порядок важен: если поменять шаги 2 и 3 местами, nbconvert
+              #    перезапишет файл и отметка пропадёт.
+              - python ci_signature.py executed_lab.ipynb
+
+              # 4. Собираем HTML-отчёт уже с отметкой внутри.
+              - jupyter nbconvert --to html --output report.html executed_lab.ipynb
+
+              # 5. Показываем в логе, что файлы действительно созданы.
+              - ls -lh executed_lab.ipynb report.html
+            artifacts:
+              paths:
+                - executed_lab.ipynb
+                - report.html
