@@ -1,0 +1,32 @@
+# Виртуальные окружения
+.venv/
+numpy_env/
+
+# Служебные файлы Python и macOS
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# Сайт-портфолио: это отдельный репозиторий
+portfolio/
+
+# Подстраховка: личные файлы лежат в ~/ws/личное/ и сюда попадать не должны
+ИНСТРУКЦИЯ.md
+ЗАЩИТА.md
+проверка.py
+
+# Артефакты сборки ЛР 9: их создаёт пайплайн, в репозитории им не место
+lab_09/executed_lab.ipynb
+lab_09/report.html
+
+# Обученную модель собирает CI командой python -m ml.train
+lab_10/models/*.pkl
+
+# Эти датасеты ноутбуки скачивают сами первой ячейкой (около 55 МБ)
+lab_04/training_data.csv
+lab_04/test_data.csv
+lab_05/predict_house_price_training_data.xlsx
+lab_05/predict_house_price_test_data.xlsx
+lab_07/positive.csv
+lab_07/negative.csv
