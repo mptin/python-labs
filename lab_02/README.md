@@ -23,6 +23,7 @@ python -m venv numpy_env
 source numpy_env/bin/activate      # Windows: numpy_env\Scripts\activate
 pip install -r requirements.txt
 python -m pytest test.py -v        # 17 тестов
+flake8 main.py test.py             # проверка PEP 8, замечаний быть не должно
 python main.py                     # демонстрация + построение графиков
 ```
 
